@@ -21,20 +21,20 @@ function createMainWindow() {
     : `file://${__dirname}/index.html`;
 
   if (isDevelopment) {
-    window.webContents.openDevTools();
+    window.webContents.on("did-frame-finish-load", () => {
+      window.webContents.once("devtools-opened", () => {
+        window.focus();
+      });
+      window.webContents.openDevTools({
+        mode: "bottom"
+      });
+    });
   }
 
   window.loadURL(url);
 
   window.on("closed", () => {
     mainWindow = null;
-  });
-
-  window.webContents.on("devtools-opened", () => {
-    window.focus();
-    setImmediate(() => {
-      window.focus();
-    });
   });
 
   return window;
